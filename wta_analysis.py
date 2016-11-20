@@ -1,10 +1,15 @@
 import os
+
 from sqlalchemy import (
     create_engine, MetaData, Table, select
 )
 from sqlalchemy.sql import func, desc
 from sqlalchemy.engine import Connection
 from sqlalchemy.sql.expression import join
+
+# Graphing.
+import pandas as pd
+import matplotlib.pyplot as plt
 
 # Constants
 DB_CRED = os.getenv('DB_CRED', '')
