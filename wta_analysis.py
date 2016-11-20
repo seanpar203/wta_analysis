@@ -2,7 +2,7 @@ import os
 from sqlalchemy import (
     create_engine, MetaData, Table, select
 )
-from sqlalchemy.sql import func, asc, desc
+from sqlalchemy.sql import func, desc
 from sqlalchemy.engine import Connection
 from sqlalchemy.sql.expression import join
 
