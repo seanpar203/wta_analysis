@@ -2,7 +2,7 @@ import os
 from sqlalchemy import (
     create_engine, MetaData, Table, select
 )
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, asc, desc
 from sqlalchemy.engine import Connection
 from sqlalchemy.sql.expression import join
 
@@ -26,22 +26,27 @@ account = Table('account', metadata, autoload=True, autoload_with=engine)
 host_time = Table('host_time', metadata, autoload=True, autoload_with=engine)
 
 # Print each tables columns.
-print(time.columns)
-print(host.columns)
-print(account.columns)
-print(host_time.columns)
+print('Print out each table columns:')
+print('time table:      {columns}'.format(columns=time.columns))
+print('host table:      {columns}'.format(columns=host.columns))
+print('account table:   {columns}'.format(columns=account.columns))
+print('host_time table: {columns}'.format(columns=host_time.columns))
 
 # Select all accounts.
-stmt = select([account])
+print('Select all accounts:')
+stmt = select([account.columns.id])
 results = connection.execute(stmt).fetchall()
-print(results)
+print('Number of accounts: {amnt}'.format(amnt=len(results)))
 
 # Select all accounts and times & group by account.
+total_seconds = func.sum(time.columns.seconds).label('total_seconds')
 joined_on = join(
     account, time,
     account.columns.id == time.columns.account_id
 )
-stmt = select([account.columns.id, func.sum(time.columns.seconds)]).select_from(joined_on)
-stmt = stmt.group_by(account.columns.id, time.columns.day)
+stmt = select([account.columns.id, total_seconds]) \
+    .select_from(joined_on) \
+    .group_by(account.columns.id) \
+    .order_by(desc(total_seconds))
 results = connection.execute(stmt).fetchall()
 print(results)
