@@ -9,7 +9,6 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.sql.expression import join
 
 # Graphing Imports
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
