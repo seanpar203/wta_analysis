@@ -8,7 +8,7 @@ from sqlalchemy.sql import func, desc
 from sqlalchemy.engine import Connection
 from sqlalchemy.sql.expression import join
 
-# Graphing.
+# Graphing Imports
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -45,14 +45,20 @@ results = connection.execute(stmt).fetchall()
 print('Number of accounts: {amnt}'.format(amnt=len(results)))
 
 # Select all accounts and times & group by account.
-total_seconds = func.sum(time.columns.seconds).label('total_seconds')
+user_accounts = account.columns.id.label('users')
+total_seconds = func.sum(time.columns.seconds).label('seconds')
 joined_on = join(
     account, time,
     account.columns.id == time.columns.account_id
 )
-stmt = select([account.columns.id, total_seconds]) \
+stmt = select([user_accounts, total_seconds]) \
     .select_from(joined_on) \
-    .group_by(account.columns.id) \
+    .group_by(user_accounts) \
     .order_by(desc(total_seconds))
 results = connection.execute(stmt).fetchall()
-print(results)
+
+# Create Pandas DataFrame from results.
+df = pd.DataFrame(results)
+df.columns = results[0].keys()
+df.plot.barh()
+plt.show()
