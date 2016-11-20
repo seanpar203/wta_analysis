@@ -9,6 +9,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.sql.expression import join
 
 # Graphing Imports
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -58,7 +59,40 @@ stmt = select([user_accounts, total_seconds]) \
 results = connection.execute(stmt).fetchall()
 
 # Create Pandas DataFrame from results.
-df = pd.DataFrame(results)
-df.columns = results[0].keys()
-df.plot.barh()
+index_value = list(range(1, len(results) + 1))
+columns = results[0].keys()
+
+df = pd.DataFrame(
+    data=results,
+    index=index_value,
+    columns=columns
+)
+
+# Convert seconds to hours.
+df['seconds'] = df['seconds'] / 60 / 60  # Convert seconds to hours.
+
+# Rename seconds columns to hours
+df.rename(columns={'seconds': 'hours'}, inplace=True)
+
+# Get users and seconds vlaues.
+users = df['users'].values
+hours = df['hours'].values
+
+# Create x & y ticks from values.
+user_xticks = ['user_id: {user}'.format(user=user) for user in users]
+hour_yticks = ['hours: {hours}'.format(hours=int(hours)) for hours in hours]
+
+# Create bar graph.
+plt.bar(df['users'].values, df['hours'].values, align='center', alpha=0.5)
+
+# Set informative info.
+plt.title('Top 5 users who spent the most time on the web.')
+plt.xlabel('Unique user id.')
+plt.ylabel('Hours spent on the web')
+
+# Set Dynamic y & x ticks.
+plt.yticks(hours, hour_yticks)
+plt.xticks(users, user_xticks)
+
+# Show bar graph.
 plt.show()
