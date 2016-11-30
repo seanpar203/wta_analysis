@@ -34,6 +34,8 @@ python-dateutil==2.6.0
 pytz==2016.7
 pyzmq==16.0.1
 qtconsole==4.2.1
+scipy==0.18.1
+seaborn==0.7.1
 simplegeneric==0.8.1
 six==1.10.0
 SQLAlchemy==1.1.4
